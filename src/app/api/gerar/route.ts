@@ -79,3 +79,4 @@ Retorne APENAS as 5 bios, uma por linha, sem numeracao ou explicacoes.`
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }
 }
+// trigger redeploy
