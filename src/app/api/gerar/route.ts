@@ -33,14 +33,21 @@ Regras:
 Retorne APENAS as 5 bios, uma por linha, sem numeracao ou explicacoes.`
 
     // Usando xAI (Grok)
+    const apiKey = process.env.XAI_API_KEY || process.env.XAI_KEY
+
+    if (!apiKey) {
+      console.error('API Key não configurada')
+      return NextResponse.json({ error: 'API não configurada' }, { status: 500 })
+    }
+
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.XAI_API_KEY}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'grok-beta',
+        model: 'grok-2-latest',
         messages: [
           { role: 'user', content: prompt }
         ],
