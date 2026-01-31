@@ -32,38 +32,38 @@ Regras:
 
 Retorne APENAS as 5 bios, uma por linha, sem numeracao ou explicacoes.`
 
-    // Usando xAI (Grok)
-    const apiKey = process.env.XAI_API_KEY || process.env.XAI_KEY
+    const apiKey = process.env.ANTHROPIC_API_KEY
 
     if (!apiKey) {
       console.error('API Key não configurada')
       return NextResponse.json({ error: 'API não configurada' }, { status: 500 })
     }
 
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    // Usando Claude (Anthropic)
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'grok-2-latest',
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 1000,
         messages: [
           { role: 'user', content: prompt }
-        ],
-        temperature: 0.8,
-        max_tokens: 1000
+        ]
       })
     })
 
     if (!response.ok) {
       const error = await response.text()
-      console.error('Erro xAI:', error)
+      console.error('Erro Claude:', error)
       return NextResponse.json({ error: 'Erro ao gerar bio' }, { status: 500 })
     }
 
     const data = await response.json()
-    const content = data.choices?.[0]?.message?.content || ''
+    const content = data.content?.[0]?.text || ''
 
     // Separar as bios por linha
     const bios = content
@@ -79,4 +79,3 @@ Retorne APENAS as 5 bios, uma por linha, sem numeracao ou explicacoes.`
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }
 }
-// trigger redeploy
